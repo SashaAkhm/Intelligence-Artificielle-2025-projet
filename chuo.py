@@ -106,25 +106,33 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-
-
 # Functions pour l'erreur moyeene et son ecart-type
-def er_instance(X, y, nn):
-    return None
+def mse_instance(X, y, nn):
 
-def er_attribute(X, y, nn):
-    return None
+    return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=1)
 
-def er_classe(X, y, nn):
-    return None
+
+def mse_attribute(X, y, nn):
+
+    return np.mean(np.square(np.subtract(nn.predict(X)), y) / 2, axis=0)
+
+
+def mse_classe(X, y, nn):
+    err_by_label = []
+    for lab in unique_labels:
+        mask = labels == lab
+        X_lab, y_lab = X[mask], y[mask]
+        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab)), y_lab) / 2))
+
+    return err_by_label
 
 def plot_model_comparison(type):
     if type == 'instance':
-        error_f = er_instance
+        error_f = mse_instance
     elif type == 'attribute':
-        error_f = er_attribute
+        error_f = mse_attribute
     elif type == 'classe':
-        error_f = er_classe
+        error_f = mse_classe
 
     # array of errors for 3 models
     errors = [error_f(X_all, y_all, nn4), error_f(X_all, y_all, nn8), error_f(X_all, y_all, nn12)]
@@ -148,5 +156,4 @@ def plot_model_comparison(type):
 plot_model_comparison('instance')
 plot_model_comparison('attribute')
 plot_model_comparison('classe')
-
 
