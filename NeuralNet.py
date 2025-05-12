@@ -142,6 +142,16 @@ class NeuralNet:
 
         return A.T
 
+
+    def reconstruction(self, X_batch):
+        A = X_batch.T
+        for l in range(2, self.n_layers + 1):
+            Z = self.weights[l].dot(A) + self.biases[l]
+            A = self.activation(Z)[0]
+
+        return A.T
+
+
     def predict(self, X_batch):
         """
         Compute the output for instances in X_batch
