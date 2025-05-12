@@ -119,3 +119,22 @@ plt.ylabel('PC2')
 plt.legend()
 plt.grid(True)
 plt.show()
+
+def mse_instance(X, y):
+
+    return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=1)
+
+
+def mse_attribute(X, y):
+
+    return np.mean(np.square(np.subtract(nn.predict(X)), y) / 2, axis=0)
+
+
+def mse_classe(X, y):
+    err_by_label = []
+    for lab in unique_labels:
+        mask = labels == lab
+        X_lab, y_lab = X[mask], y[mask]
+        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab)), y_lab) / 2))
+
+    return err_by_label
