@@ -120,17 +120,17 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-def mse_instance(X, y):
+def mse_instance(X, y, nn):
 
     return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=1)
 
 
-def mse_attribute(X, y):
+def mse_attribute(X, y, nn):
 
     return np.mean(np.square(np.subtract(nn.predict(X)), y) / 2, axis=0)
 
 
-def mse_classe(X, y):
+def mse_classe(X, y, nn):
     err_by_label = []
     for lab in unique_labels:
         mask = labels == lab
