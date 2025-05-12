@@ -48,7 +48,7 @@ nn12.fit(X_train, y_train, X_val, y_val)
 
 
 # Find 50% best instances
-all_errors = np.square(np.subtract(nn.predict(X_all), y_all)).mean(axis=1) / 2
+all_errors = np.square(np.subtract(nn8.predict(X_all), y_all)).mean(axis=1) / 2
 
 median = np.median(all_errors)
 mask = all_errors < median
@@ -114,7 +114,7 @@ def mse_instance(X, y, nn):
 
 def mse_attribute(X, y, nn):
 
-    return np.mean(np.square(np.subtract(nn.predict(X)), y) / 2, axis=0)
+    return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=0)
 
 
 def mse_classe(X, y, nn):
@@ -122,7 +122,7 @@ def mse_classe(X, y, nn):
     for lab in unique_labels:
         mask = labels == lab
         X_lab, y_lab = X[mask], y[mask]
-        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab)), y_lab) / 2))
+        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab)) / 2))
 
     return err_by_label
 
