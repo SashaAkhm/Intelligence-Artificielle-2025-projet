@@ -137,22 +137,23 @@ def mse_attribute(X, y, nn, make_plot = True):
 
 
 def mse_classe(X, y, nn, make_plot = True):
-    mse_par_class = []
+    errors = []
+    errors_mean = []
     for lab in unique_labels:
         mask = labels == lab
         X_lab, y_lab = X[mask], y[mask]
-        mse_par_class.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab))))
 
-    mse_par_class = np.array(mse_par_class).reshape(1,3)
+        mse_par_class = np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab)), axis = 1)
+        errors.append(mse_par_class)
+        errors_mean.append(np.mean(mse_par_class))
+
     if make_plot:
-        errors = mse_par_class.T
         errors_names = [f"Class {i + 1}" for i in range(3)]
 
-        means = np.mean(errors, axis=1)
-        stds = np.std(errors, axis=1)
+        stds = [np.std(m) for m in errors]
 
         plt.figure(figsize=(12, 8))
-        plt.errorbar(errors_names, means, yerr=stds, fmt='o', capsize=5, color='black')
+        plt.errorbar(errors_names, errors_mean, yerr=stds, fmt='o', capsize=5, color='black')
 
         plt.title(f"Comparing of errors for different classes")
         plt.ylabel('Value')
@@ -160,7 +161,7 @@ def mse_classe(X, y, nn, make_plot = True):
         plt.tight_layout()
         plt.show()
 
-    return mse_par_class
+    return errors_mean
 
 def plot_model_comparison(type):
     if type == 'instance':
