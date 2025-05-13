@@ -161,7 +161,8 @@ plot_model_comparison('classe')
 '''
 #Items à évaluer
 
-instance = X_val[np.random.choice(len(X_val))]
+ind = np.random.choice(len(X_val))
+instance = X_val[ind:ind+1]
 
 inst_compressed = nn8.compresse(instance)
 
@@ -169,3 +170,6 @@ inst_reconstructed = nn8.reconstruction(inst_compressed)
 
 print(instance.shape, inst_compressed.shape, inst_reconstructed.shape)
 
+print(instance.T)
+print(inst_compressed.T)
+print(inst_reconstructed.T)
