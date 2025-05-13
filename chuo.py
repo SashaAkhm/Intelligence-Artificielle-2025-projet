@@ -216,7 +216,6 @@ def MSE_cost(y_hat, y):
     mse = np.square(np.subtract(y_hat, y)).mean()
     return mse
 
-inst_proches = []
 for i in range(1, len(X_all)):
     if MSE_cost(nn8.compresse(X_all[i]), nn8.compresse(X_all[0])) < 0.09:
         print(MSE_cost(nn8.compresse(X_all[i]), nn8.compresse(X_all[0])))
@@ -229,3 +228,5 @@ indexes = np.random.choice(len(X_all), size=3)
 for ind in indexes:
     instances.append(X_all[ind:ind+1])
 
+for inst in instances:
+    print(MSE_cost(inst, nn8.predict(inst)))
