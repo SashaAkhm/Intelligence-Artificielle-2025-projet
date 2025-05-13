@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
+from numpy.ma.core import compressed
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 
@@ -60,7 +61,7 @@ X_50_compressed_to4 = nn4.compresse(X_50)
 X_50_compressed_to8 = nn8.compresse(X_50)
 X_50_compressed_to12 = nn12.compresse(X_50)
 
-
+'''
 # PCA graphiques for 8-compressing
 pca = PCA(n_components=2)
 unique_labels = np.unique(labels)
@@ -85,7 +86,6 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-
 # PCA graphique for compressed data (50% best)
 X_50_comp_pca = pca.fit_transform(X_50_compressed_to8)
 
@@ -106,7 +106,8 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-# Functions pour l'erreur moyeene et son ecart-type
+'''
+# Functions pour l'erreur moyenne et son ecart-type
 def mse_instance(X, y, nn):
 
     return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=1)
@@ -142,6 +143,7 @@ def plot_model_comparison(type):
     means = [np.mean(m) for m in errors]
     stds = [np.std(m) for m in errors]
 
+'''
     # Drawing plot
     plt.figure(figsize=(12, 8))
     plt.errorbar(errors_names, means, yerr=stds, fmt='o', capsize=5, color='black')
@@ -152,8 +154,18 @@ def plot_model_comparison(type):
     plt.tight_layout()
     plt.show()
 
-
 plot_model_comparison('instance')
 plot_model_comparison('attribute')
 plot_model_comparison('classe')
+
+'''
+#Items à évaluer
+
+instance = X_val[np.random.choice(len(X_val))]
+
+inst_compressed = nn8.compresse(instance)
+
+inst_reconstructed = nn8.reconstruction(inst_compressed)
+
+print(instance.shape, inst_compressed.shape, inst_reconstructed.shape)
 
