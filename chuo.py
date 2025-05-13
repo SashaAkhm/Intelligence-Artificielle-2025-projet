@@ -110,12 +110,30 @@ plt.show()
 # Functions pour l'erreur moyenne et son ecart-type
 def mse_instance(X, y, nn):
 
-    return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=1)
+    return np.mean(np.square(np.subtract(nn.predict(X), y)), axis=1)
 
 
-def mse_attribute(X, y, nn):
+def mse_attribute(X, y, nn, make_plot = True):
 
-    return np.mean(np.square(np.subtract(nn.predict(X), y)) / 2, axis=0)
+    mse_par_attr = np.square(np.subtract(nn.predict(X), y))
+    if make_plot:
+        errors = mse_par_attr.T
+        errors_names = [f"Atr {i + 1}" for i in range(20)]
+
+        means = np.mean(errors, axis=1)
+        stds = np.std(errors, axis=1)
+
+        plt.figure(figsize=(12, 8))
+        plt.errorbar(errors_names, means, yerr=stds, fmt='o', capsize=5, color='black')
+
+        plt.title(f"Comparing of errors for different attributes")
+        plt.ylabel('Value')
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.show()
+
+
+    return np.mean(mse_par_attr, axis=0)
 
 
 def mse_classe(X, y, nn):
@@ -123,7 +141,7 @@ def mse_classe(X, y, nn):
     for lab in unique_labels:
         mask = labels == lab
         X_lab, y_lab = X[mask], y[mask]
-        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab)) / 2))
+        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab))))
 
     return err_by_label
 
@@ -136,7 +154,7 @@ def plot_model_comparison(type):
         error_f = mse_classe
 
     # array of errors for 3 models
-    errors = [error_f(X_all, y_all, nn4), error_f(X_all, y_all, nn8), error_f(X_all, y_all, nn12)]
+    errors = [error_f(X_all, y_all, nn4, make_plot = False), error_f(X_all, y_all, nn8, make_plot = False), error_f(X_all, y_all, nn12, make_plot = False)]
     errors_names = [f"Model compressing to {4 * i} features" for i in range(1, 4)]
 
     # Mean and ecart-type
@@ -160,6 +178,8 @@ plot_model_comparison('attribute')
 plot_model_comparison('classe')
 
 '''
+
+mse_attribute(X_all, y_all, nn8)
 #Items à évaluer
 
 ind = np.random.choice(len(X_val))
@@ -169,8 +189,6 @@ inst_compressed = nn8.compresse(instance)
 
 inst_reconstructed = nn8.reconstruction(inst_compressed)
 
-print(instance.shape, inst_compressed.shape, inst_reconstructed.shape)
-
-print(instance.T)
-print(inst_compressed.T)
-print(inst_reconstructed.T)
+# print(instance.T)
+# print(inst_compressed.T)
+# print(inst_reconstructed.T)
