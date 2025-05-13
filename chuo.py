@@ -1,7 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
-from numpy.ma.core import compressed
 from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 
@@ -78,7 +77,7 @@ for lab in unique_labels:
         label= f"Espese {lab}",
         alpha=0.7
     )
-'''
+
 plt.title('PCA for initial data (50% best for compressing)')
 plt.xlabel('PC1')
 plt.ylabel('PC2')
@@ -105,7 +104,7 @@ plt.ylabel('PC2')
 plt.legend()
 plt.grid(True)
 plt.show()
-'''
+
 
 # Functions pour l'erreur moyenne et son ecart-type
 def mse_instance(X, y, nn, make_plot = True):
