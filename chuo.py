@@ -62,7 +62,7 @@ X_50_compressed_to4 = nn4.compresse(X_50)
 X_50_compressed_to8 = nn8.compresse(X_50)
 X_50_compressed_to12 = nn12.compresse(X_50)
 
-'''
+
 # PCA graphiques for 8-compressing
 pca = PCA(n_components=2)
 
@@ -78,7 +78,7 @@ for lab in unique_labels:
         label= f"Espese {lab}",
         alpha=0.7
     )
-
+'''
 plt.title('PCA for initial data (50% best for compressing)')
 plt.xlabel('PC1')
 plt.ylabel('PC2')
@@ -105,10 +105,10 @@ plt.ylabel('PC2')
 plt.legend()
 plt.grid(True)
 plt.show()
-
 '''
+
 # Functions pour l'erreur moyenne et son ecart-type
-def mse_instance(X, y, nn):
+def mse_instance(X, y, nn, make_plot = True):
 
     return np.mean(np.square(np.subtract(nn.predict(X), y)), axis=1)
 
@@ -136,14 +136,31 @@ def mse_attribute(X, y, nn, make_plot = True):
     return np.mean(mse_par_attr, axis=0)
 
 
-def mse_classe(X, y, nn):
-    err_by_label = []
+def mse_classe(X, y, nn, make_plot = True):
+    mse_par_class = []
     for lab in unique_labels:
         mask = labels == lab
         X_lab, y_lab = X[mask], y[mask]
-        err_by_label.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab))))
+        mse_par_class.append(np.mean(np.square(np.subtract(nn.predict(X_lab), y_lab))))
 
-    return err_by_label
+    mse_par_class = np.array(mse_par_class).reshape(1,3)
+    if make_plot:
+        errors = mse_par_class.T
+        errors_names = [f"Class {i + 1}" for i in range(3)]
+
+        means = np.mean(errors, axis=1)
+        stds = np.std(errors, axis=1)
+
+        plt.figure(figsize=(12, 8))
+        plt.errorbar(errors_names, means, yerr=stds, fmt='o', capsize=5, color='black')
+
+        plt.title(f"Comparing of errors for different classes")
+        plt.ylabel('Value')
+        plt.grid(axis='y', linestyle='--', alpha=0.7)
+        plt.tight_layout()
+        plt.show()
+
+    return mse_par_class
 
 def plot_model_comparison(type):
     if type == 'instance':
@@ -180,7 +197,9 @@ plot_model_comparison('classe')
 '''
 
 mse_attribute(X_all, y_all, nn8)
-#Items à évaluer
+
+mse_classe(X, y, nn8)
+
 
 ind = np.random.choice(len(X_val))
 instance = X_val[ind:ind+1]
@@ -192,3 +211,20 @@ inst_reconstructed = nn8.reconstruction(inst_compressed)
 # print(instance.T)
 # print(inst_compressed.T)
 # print(inst_reconstructed.T)
+def MSE_cost(y_hat, y):
+    mse = np.square(np.subtract(y_hat, y)).mean()
+    return mse
+
+inst_proches = []
+for i in range(1, len(X_all)):
+    if MSE_cost(nn8.compresse(X_all[i]), nn8.compresse(X_all[0])) < 0.09:
+        print(MSE_cost(nn8.compresse(X_all[i]), nn8.compresse(X_all[0])))
+        print(MSE_cost(X_all[i], X_all[0]))
+        break
+
+
+instances=[]
+indexes = np.random.choice(len(X_all), size=3)
+for ind in indexes:
+    instances.append(X_all[ind:ind+1])
+
