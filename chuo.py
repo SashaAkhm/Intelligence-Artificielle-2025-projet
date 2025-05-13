@@ -20,6 +20,7 @@ features = df_columns[1:]
 df[features] = df[features].apply(lambda x: 2 * (x - x.min()) / (x.max() - x.min()) - 1)
 label_col = df_columns[0]
 labels = df[label_col].to_numpy()
+unique_labels = np.unique(labels)
 
 # We have responses equal to the instances
 X = df[features]
@@ -64,7 +65,6 @@ X_50_compressed_to12 = nn12.compresse(X_50)
 '''
 # PCA graphiques for 8-compressing
 pca = PCA(n_components=2)
-unique_labels = np.unique(labels)
 
 # PCA graphique for initial data (50% best)
 X_50_pca = pca.fit_transform(X_50)
@@ -143,7 +143,7 @@ def plot_model_comparison(type):
     means = [np.mean(m) for m in errors]
     stds = [np.std(m) for m in errors]
 
-'''
+
     # Drawing plot
     plt.figure(figsize=(12, 8))
     plt.errorbar(errors_names, means, yerr=stds, fmt='o', capsize=5, color='black')
@@ -154,6 +154,7 @@ def plot_model_comparison(type):
     plt.tight_layout()
     plt.show()
 
+'''
 plot_model_comparison('instance')
 plot_model_comparison('attribute')
 plot_model_comparison('classe')
