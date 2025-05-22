@@ -28,7 +28,8 @@ The training and evaluation were performed using the iris dataset, available in 
 ## 📁 Project Structure
 
 ```
-├── README.md # This file
+├── README.md # This file 
+├── 4.RepresentationsReconstruction.pdf # File with task description
 ├── main.py # Main script, entry point of the project
 ├── NeuralNet.py # Contains the neural network class implementation
 ├── Utility.py # Helper functions
