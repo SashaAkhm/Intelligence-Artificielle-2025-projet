@@ -30,11 +30,10 @@ The training and evaluation were performed using the iris dataset, available in 
 ```
 ├── README.md # This file 
 ├── 4.RepresentationsReconstruction.pdf # File with task description
-├── main.py # Main script, entry point of the project
+├── main.py # Main script
 ├── NeuralNet.py # Contains the neural network class implementation
 ├── Utility.py # Helper functions
-├── items_a_evalue.ipynb # Jupyter Notebook implementing the required tasks
+├── items_a_evalue.ipynb # Jupyter Notebook used for presentation of project
 ├── iris_extended.csv # Dataset used for training and evaluation
-├── .gitignore # Specifies untracked files
-└── LICENSE # License file 
+└── .gitignore # Specifies untracked files
 ```
