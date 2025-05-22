@@ -3,17 +3,20 @@ import scipy.special  # to use built-in softmax function (avoid numerical instab
 
 
 #### ACTIVATION FUNCTIONS
+"""
+Applies to all activation functions.
+
+Parameters:
+  Z : non activated outputs
+Returns:
+  (A : 2d ndarray of activated outputs, df: derivative component wise)
+"""
+
 def identity(Z):
     return Z, 1
 
 
 def tanh(Z):
-    """
-    Parameters:
-      Z : non activated outputs
-    Returns:
-      (A : 2d ndarray of activated outputs, df: derivative component wise)
-    """
     A = np.empty(Z.shape)
     A = 2.0 / (1 + np.exp(-2.0 * Z)) - 1  # A = np.tanh(Z)
     df = 1 - A ** 2
@@ -51,21 +54,18 @@ def softmax(Z):
 
 
 #### COST FUNCTIONS
-def cross_entropy_cost(y_hat, y):
-    n = y_hat.shape[1]
-    ce = -np.sum(y * np.log(y_hat + 1e-9)) / n
-    grad = None
-    return ce, grad
+"""
+Applies to all cost functions.
 
+Parameters:
+  y_hat : predicted output from the model
+  y : the right answer
+Returns:
+  (error : scalar value, grad: gradient of cost function component wise)
+"""
 
 def MSE_cost(y_hat, y):
     n = y_hat.shape[0]
     mse = np.square(np.subtract(y_hat, y)).mean() / 2
     grad = np.subtract(y_hat, y) / n
     return mse, grad
-
-
-"""
-Explication visuelle du MSE:
-https://towardsdatascience.com/coding-deep-learning-for-beginners-linear-regression-part-2-cost-function-49545303d29f
-"""

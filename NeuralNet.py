@@ -44,12 +44,7 @@ class NeuralNet:
         else:
             self.activation = Utility.identity
 
-        if error_cost == 'cross-entropy':
-            self.error_cost = Utility.cross_entropy_cost
-        else:
-            self.error_cost = Utility.MSE_cost
-
-        return None
+        self.error_cost = Utility.MSE_cost
 
     def __weights_initialization(self, X, y):
         # Initialize hidden layers
@@ -67,8 +62,6 @@ class NeuralNet:
         self.n_outputs = y.shape[1]
         self.weights[l_out] = np.random.uniform(-1, 1, (self.n_outputs, n_cols))
         self.biases[l_out] = np.random.uniform(-1, 1, (self.n_outputs, 1))
-
-        return None
 
     def fit(self, X_train, y_train, X_val=None, y_val=None, val=0.2):
         if not self.has_trained:
@@ -99,7 +92,7 @@ class NeuralNet:
                 ave_train_error += batch_train_error[processed_batch]
 
                 # Backpropagation
-                self.__backward_pass(batch_X_train, batch_y_train, e, True)
+                self.__backward_pass(batch_X_train, batch_y_train, True)
 
                 processed_batch += 1
                 # #### Training / End batch process for current epoch
@@ -132,9 +125,14 @@ class NeuralNet:
         plt.ylabel('Error', fontsize=20)
         plt.show()
 
-        return None
-
     def compresse(self, X_batch):
+        """
+        Compute the compressed form for instances in X_batch
+        Returns: compressed data
+
+        * batch data organized with exemples in rows
+        """
+
         A = X_batch.T
         for l in range(0, 2):
             Z = self.weights[l].dot(A) + self.biases[l]
@@ -142,8 +140,14 @@ class NeuralNet:
 
         return A.T
 
-
     def reconstruction(self, X_batch):
+        """
+        Compute the reconstruction form for compressed instances in X_batch
+        Returns: reconstructed data
+
+        * batch data organized with exemples in rows
+        """
+
         A = X_batch.T
         for l in range(2, self.n_layers + 1):
             Z = self.weights[l].dot(A) + self.biases[l]
@@ -151,11 +155,12 @@ class NeuralNet:
 
         return A.T
 
-
     def predict(self, X_batch):
         """
         Compute the output for instances in X_batch
-        Returns: output probabilities
+        Returns: output vector
+
+        * batch data organized with exemples in rows
         """
 
         A = X_batch.T
@@ -173,6 +178,8 @@ class NeuralNet:
         Parameters:
           X_batch: batch used in forward pass
           y_batch: labels for X_batch
+
+          * batch data organized with exemples in columns
         Returns:
           model error on batch, output probabilities
         """
@@ -183,12 +190,10 @@ class NeuralNet:
             Z = self.weights[l].dot(A) + self.biases[l]
             A = self.activation(Z)[0]
 
+            # Update parameters for the next call of backpropagation
             self.Z[l] = Z
             self.df[l] = self.activation(Z)[1]
             self.A[l] = A
-
-        # Compute the output
-        # TODO
 
         # Compute the error
         if y_batch is None: return None, A
@@ -197,37 +202,37 @@ class NeuralNet:
 
         return error, A
 
-    def __backward_pass(self, X_batch, y_batch, epoch, from_fit=False):
+    def __backward_pass(self, X_batch, y_batch, from_fit=False):
         """
-        Perform gradient backpropagation
-          (ASSUMES output softmax activation & cross-entropy cost)
-          About biases update for batch size > 1:
-          https://stats.stackexchange.com/questions/373163/how-are-biases-updated-when-batch-size-1
+        Performs gradient backpropagation
         Parameters:
           X_batch : batch used in forward pass
           y_batch : labels for X_batch
-          epoch   : epoch #
+          from_fit : indicates whether the method is called from 'fit' method
+
+          * batch data organized with exemples in columns
         Returns : None
         """
         delta = [None] * (self.n_layers + 1)
         dW = [None] * (self.n_layers + 1)
         db = [None] * (self.n_layers + 1)
 
+        # Handle the case when delta, dW, db have not been initialized yet
         if not from_fit:
             self.__feed_forward(X_batch, y_batch)
 
-        # Error on output layer
+        # Compute error on output layer
         y_hat = self.A[self.n_layers]
         delta[self.n_layers] = self.error_cost(y_hat, y_batch)[1] * self.df[self.n_layers]
 
-        # Backpropagate the error in the hidden layers
+        # Backpropagate the error through the hidden layers
         for l in range(self.n_layers - 1, -1, -1):
             delta[l] = self.weights[l + 1].T.dot(delta[l + 1]) * self.df[l]
 
-        # Calculate number of exemples in one batch
+        # Calculate the number of examples in the batch
         nb = X_batch.shape[1]
 
-        # Calculate changes
+        # Calculate weight and bias updates
         for l in range(self.n_layers, 0, -1):
             dW[l] = delta[l].dot(self.A[l - 1].T) / nb
             db[l] = self.__ave_delta(delta[l])
@@ -239,8 +244,6 @@ class NeuralNet:
         for l in range(0, self.n_layers + 1):
             self.weights[l] -= self.learning_rate * dW[l]
             self.biases[l] -= self.learning_rate * db[l]
-
-        return None
 
     @staticmethod
     def __ave_delta(delta):
@@ -261,44 +264,3 @@ class NeuralNet:
 
     def __repr__(self):
         return self.__str__()
-
-
-###############################################################################
-# MODULE TEST
-###############################################################################
-import pandas as pd
-
-
-def main():
-    # Load data
-    root = ""
-    iris_df = pd.read_csv(root + 'iris.csv')
-
-    # Extrate attributes names and target
-    df_columns = iris_df.columns.values.tolist()
-    features = df_columns[0:4]
-    label = df_columns[4:]  # ['class']
-
-    X = iris_df[features]
-    y = iris_df[label]
-    y = pd.get_dummies(y, dtype='int')  # one-hot encoding
-
-    X_train, X_val, y_train, y_val = \
-        train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Convert dataframes to numpy arrays
-    X_train, y_train = X_train.to_numpy(), y_train.to_numpy()
-    X_val, y_val = X_val.to_numpy(), y_val.to_numpy()
-
-    # Instanciate a neural network
-    nn = NeuralNet(hidden_layer_sizes=(3, 2), batch_size=4, activation='tanh',
-                   learning_rate=0.01, epoch=100)
-
-    # Fit the model
-    nn.fit(X_train, y_train, X_val, y_val)
-
-    return
-
-
-if __name__ == '__main__':
-    main()
