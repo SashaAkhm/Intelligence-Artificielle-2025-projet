@@ -1,5 +1,5 @@
 # Intelligence Artificielle 2025, projet semestriel
-## Sujet 4 --- Apprentissage de représentations par reconstruction
+## Sujet 4 ── Apprentissage de représentations par reconstruction
 
 This project is a practical assignment for the course *Intelligence Artificielle* taught in Spring 2025 at the University of Strasbourg. We chose Topic 4, the full description of which can be found in this repository (see the corresponding file).
 
@@ -11,7 +11,7 @@ This project is a practical assignment for the course *Intelligence Artificielle
 - **Luka Beklemishev**
 - **Noah Jamart**
 
-Groupe --- L2 MPA
+Groupe ── L2 MPA
 
 ---
 
